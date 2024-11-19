@@ -45,6 +45,11 @@ env_vars = load_env_variables()
 SPREADSHEET_ID = env_vars.get("SPREADSHEET_ID")
 TOKEN_PATH = env_vars.get("TOKEN_PATH")
 BASE_DIR = env_vars.get("BASE_DIR")
+SENDER_NAME = env_vars.get("SENDER_NAME")
+RECIEVER_NAME=env_vars.get("RECIEVER_NAME")
+RECIEVER_EMAIL=env_vars.get("RECIEVER_EMAIL")
+PREFIX=env_vars.get("PREFIX")
+SENDER_COMPANY=env_vars.get("SENDER_COMPANY")
 
 
 def pprint(message, separator="=", width=50):
