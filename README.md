@@ -23,7 +23,7 @@ python upload_timesheet_to_db.py timesheets/2024/{MONTH}/{EXPORTED_FILE_NAME}
 
 #### 3. Then draft the gmail:
 - this python script requires the `.env` file that stores the environmental variables. Update as needed.
-- also requires the date passed as an argument so it can look up the sqlite3 database for the proper date range.
+- also requires the date passed as an argument so it can look up the sqlite3 database for the proper date range. the invoices correspond to bi-weekly schedule so it will always either grab the 1st to the 15th of the month or the 16th to the end of the month
 
 ```bash
 python draft_gmail.py -d MM-DD-YYYY
