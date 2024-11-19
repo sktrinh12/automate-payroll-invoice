@@ -1,0 +1,5 @@
+.env
+timesheet.db
+token.json
+timesheets/
+invoices/
