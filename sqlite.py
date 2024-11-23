@@ -1,18 +1,17 @@
 import sqlite3
-from os import getenv
-from helper import pprint
+from helper import pprint, os.path
 
 
 def upload_to_sqlite(timelogs, request_url):
     from_date = None
     to_date = None
-    conn = sqlite3.connect(getenv('DB_NAME'))
+    conn = sqlite3.connect(os.getenv('DB_NAME'))
     cursor = conn.cursor()
 
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS RCH_TIMESHEET (
-            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            ID INTEGER PRIMARY KEY,
             DATE_TIME TEXT,
             DECIMAL_HOURS REAL,
             REQUEST_URL TEXT
@@ -38,8 +37,8 @@ def upload_to_sqlite(timelogs, request_url):
                 (record_id, date_time, decimal_hours, request_url),
             )
         except sqlite3.IntegrityError as e:
-            print(f"Primary key error on row {i}: {timelog}")
-            print(f"Error message: {e}")
+            pprint(f">>>Primary key error on row {i}: {timelog}")
+            pprint(f">>>Error message: {e}")
             raise
 
     conn.commit()
@@ -48,7 +47,7 @@ def upload_to_sqlite(timelogs, request_url):
 
 
 def extract_data_from_db(from_date, to_date):
-    conn = sqlite3.connect(getenv('DB_NAME'))
+    conn = sqlite3.connect(os.getenv('DB_NAME'))
     cursor = conn.cursor()
 
     query = """
