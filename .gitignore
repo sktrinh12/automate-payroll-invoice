@@ -4,3 +4,4 @@ token.json
 timesheets/
 invoices/
 __pycache__
+*.db
