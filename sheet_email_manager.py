@@ -1,4 +1,3 @@
-import os.path
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -8,10 +7,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-from datetime import datetime
-import base64
-from helper import pprint, count_invoices
+from helper import pprint, count_invoices, datetime, os.path
 from sqlite import extract_data_from_db
+import base64
 
 
 SCOPES = [
@@ -24,10 +22,10 @@ INVOICE_COUNT = 0
 OUTPUT_FILE = ""
 
 
-def update_sheet(service, from_date, to_date, e22_value):
+def update_sheet(service, from_date, to_date, total_hours):
     global INVOICE_COUNT
     global OUTPUT_FILE
-    formatted_date = datetime.now().strftime("%m/%d/%Y")
+    todays_date = datetime.now().strftime("%m/%d/%Y")
 
     b22_value = f"{from_date} to {to_date} paid hours worked for {os.getenv('SENDER_COMPANY')}"
     INVOICE_COUNT = count_invoices(os.getenv("BASE_DIR"))
@@ -53,7 +51,7 @@ def update_sheet(service, from_date, to_date, e22_value):
         spreadsheetId=os.getenv('SPREADSHEET_ID'),
         range=range_g6,
         valueInputOption="RAW",
-        body={"values": [[f"Sent date: {formatted_date}"]]},
+        body={"values": [[f"Sent date: {todays_date}"]]},
     ).execute()
 
     # Update B22 text box
@@ -71,7 +69,7 @@ def update_sheet(service, from_date, to_date, e22_value):
         spreadsheetId=os.getenv('SPREADSHEET_ID'),
         range=range_e22,
         valueInputOption="RAW",
-        body={"values": [[e22_value]]},
+        body={"values": [[total_hours]]},
     ).execute()
 
 
@@ -81,18 +79,19 @@ def create_gmail_draft(service_gmail, from_date, to_date, file_path):
 <html>
 <body>
     <p>Hi {os.getenv('RECIEVER_NAME')} Payroll Department,</p>
-    <p></p>
+    <br>
     <p>
         Please see attached current invoice number <b>{INVOICE_COUNT:03}</b> for
         <b>{from_date}</b> to <b>{to_date}</b> in <span style="font-family: monospace; background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; border: 1px solid #ddd;">.xlsx</span> file format.
     </p>
-    <p></p>
+    <br>
+    <br>
     <p>Please let me know if you have any questions. Thank you.</p>
-    <p></p>
-    <p></p>
-    <p></p>
+    <br>
+    <br>
+    <br>
     <p>Best regards, </p>
-    <p></p>
+    <br>
     <p>{os.getenv('SENDER_NAME')}</p>
 </body>
 </html>
