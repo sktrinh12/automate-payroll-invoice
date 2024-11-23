@@ -3,28 +3,28 @@
 - The working directory is like so:
 
 ```bash
- draft_gmail.py
  invoices
  timesheet.db
  timesheets
  token.json
- upload_timesheet_to_db.py
+ helper.py
+ main.py
+ sheet_email_manager.py
+ sqlite.py
+ teamwork_request.py
  .env
 ```
 
-#### 1. First download the exported xlsx file to the appropriate directory `timesheets`
-#### 1a. Might have to delete `token.json` to freshly generate one in the browser
+#### Simply run `python main.py -d DD-MM-YYYY` 
+- This now has been streamlined to be one `main.py` file that has several modules
+- The date argument is used to grab the proper date range. The invoices correspond to bi-weekly schedule so it will always either grab the 1st to the 15th of the month or the 16th to the end of the month
+- Might have to delete `token.json` to freshly generate one in the browser
+- The database table name is RCH_TIMESHEET
 
-#### 2. In the terminal run the following in order to upload the data to a sqlite3 database:
 
-```bash
-python upload_timesheet_to_db.py timesheets/2024/{MONTH}/{EXPORTED_FILE_NAME}
-```
-
-#### 3. Then draft the gmail:
-- this python script requires the `.env` file that stores the environmental variables. Update as needed.
-- also requires the date passed as an argument so it can look up the sqlite3 database for the proper date range. the invoices correspond to bi-weekly schedule so it will always either grab the 1st to the 15th of the month or the 16th to the end of the month
-
-```bash
-python draft_gmail.py -d MM-DD-YYYY
-```
+#### Flow of script:
+- this python script requires the `.env` file that stores the environmental variables. Update as needed
+- use of the teamwork API to fetch the proper data and return a json payload
+- python loops through payload and uploads to the sqlite3 database, `DB_NAME` which is part of the `.env` content.
+- Use of Google Sheets API to update several cells in a specific sheet
+- Download the sheet locally and also attach it to a draft email using Google Gmail API 
