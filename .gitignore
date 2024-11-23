@@ -3,3 +3,4 @@ timesheet.db
 token.json
 timesheets/
 invoices/
+__pycache__
