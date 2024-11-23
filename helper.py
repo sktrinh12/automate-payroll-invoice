@@ -18,7 +18,10 @@ def count_invoices(base_directory):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process a date string in the format DD-MM-YYYY or MM-DD-YYYY.')
-    parser.add_argument('-d', '--date', type=str, help='Required date string (e.g., 15-10-2024 or 10-15-2024)')
+    # required date argument
+    parser.add_argument('-d', '--date', type=str, required=True, help='Required date string (e.g., 15-10-2024 or 10-15-2024)')
+    # optional argument to skip drafting of email
+    parser.add_argument('-e', '--email', action='store_false', help='Optional flag to trigger drafting an email')
     args = parser.parse_args()
 
     try:
@@ -29,7 +32,7 @@ def parse_arguments():
         except ValueError:
             parser.error("Date must be in the format DD-MM-YYYY or MM-DD-YYYY.")
 
-    return parsed_date.day, parsed_date.month, parsed_date.year
+    return parsed_date.day, parsed_date.month, parsed_date.year, args.trigger
 
 
 def load_env_file(env_file_path):
