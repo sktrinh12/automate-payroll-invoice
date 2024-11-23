@@ -44,7 +44,6 @@ def load_env_file(env_file_path):
                     os.environ[key.strip()] = value.strip()
         pprint("Environment variables loaded successfully.")
     except FileNotFoundError:
-        print(f".env file not found: {env_file_path}")
+        pprint(f">>>.env file not found: {env_file_path}")
     except Exception as e:
-        print(f"An error occurred while loading the .env file: {e}")
-
+        pprint(f">>>An error occurred while loading the .env file: {e}")
