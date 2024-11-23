@@ -3,8 +3,9 @@ import os.path
 import glob
 import argparse
 
-def pprint(message, separator="=", width=50):
-    print(f"\n{separator * width}\n{message}\n{separator * width}\n")
+def pprint(message, separator="="):
+    width = len(message)
+    print(f"{message}\n{separator * width}\n")
 
 
 def count_invoices(base_directory):
@@ -41,7 +42,7 @@ def load_env_file(env_file_path):
                 if line and not line.startswith('#'):
                     key, value = line.split('=', 1)
                     os.environ[key.strip()] = value.strip()
-        print("Environment variables loaded successfully.")
+        pprint("Environment variables loaded successfully.")
     except FileNotFoundError:
         print(f".env file not found: {env_file_path}")
     except Exception as e:
