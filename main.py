@@ -1,13 +1,12 @@
 import os
 import calendar
-from functions import datetime, parse_arguments, pprint, load_env_file
-from api_request import fetch_timelogs
-from sqlite_uploader import upload_to_sqlite
-from draft_gmail import draft_email
+from helper import datetime, parse_arguments, pprint, load_env_file
+from teamwork_request import fetch_timelogs
+from sqlite import upload_to_sqlite
+from sheet_email_manager import draft_email
 
 
 if __name__ == "__main__":
-    # Load environment variables
     load_env_file(".env")
 
     day, month, year = parse_arguments()
