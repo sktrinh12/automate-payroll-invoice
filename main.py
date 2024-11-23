@@ -7,7 +7,7 @@ from sheet_email_manager import draft_email
 if __name__ == "__main__":
     load_env_file(".env")
 
-    day, month, year = parse_arguments()
+    day, month, year, boolean_email = parse_arguments()
 
     if day <= 15:
         from_date = f"{year}-{month:02d}-01"
@@ -27,4 +27,5 @@ if __name__ == "__main__":
     upload_to_sqlite(timelogs, request_url)
 
     # Draft an email
-    draft_email(from_date, to_date)
+    if boolean_email:
+        draft_email(from_date, to_date)
