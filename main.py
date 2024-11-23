@@ -1,5 +1,3 @@
-import os
-import calendar
 from helper import datetime, parse_arguments, pprint, load_env_file
 from teamwork_request import fetch_timelogs
 from sqlite import upload_to_sqlite
@@ -15,6 +13,7 @@ if __name__ == "__main__":
         from_date = f"{year}-{month:02d}-01"
         to_date = f"{year}-{month:02d}-15"
     else:
+        import calendar
         last_day = calendar.monthrange(year, month)[1]
         from_date = f"{year}-{month:02d}-16"
         to_date = f"{year}-{month:02d}-{last_day:02d}"
