@@ -1,6 +1,6 @@
 import sqlite3
 from os import getenv
-from functions import pprint
+from helper import pprint
 
 
 def upload_to_sqlite(timelogs, request_url):
@@ -38,12 +38,13 @@ def upload_to_sqlite(timelogs, request_url):
                 (record_id, date_time, decimal_hours, request_url),
             )
         except sqlite3.IntegrityError as e:
-            print(f"Primary key error on row {i}: {row.to_dict()}")
+            print(f"Primary key error on row {i}: {timelog}")
             print(f"Error message: {e}")
+            raise
 
     conn.commit()
     conn.close()
-    print(f"Data from {from_date} to {to_date} uploaded successfully.")
+    pprint(f"Data from {from_date} to {to_date} uploaded successfully.")
 
 
 def extract_data_from_db(from_date, to_date):

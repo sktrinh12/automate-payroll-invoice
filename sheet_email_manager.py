@@ -10,9 +10,8 @@ from email.mime.base import MIMEBase
 from email import encoders
 from datetime import datetime
 import base64
-from functions import pprint
-from functions import count_invoices
-from sqlite_uploader import extract_data_from_db
+from helper import pprint, count_invoices
+from sqlite import extract_data_from_db
 
 
 SCOPES = [
