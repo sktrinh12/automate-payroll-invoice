@@ -7,8 +7,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-from helper import pprint, count_invoices, datetime, os.path
+from helper import pprint, count_invoices, datetime
 from sqlite import extract_data_from_db
+import os.path
 import base64
 
 
