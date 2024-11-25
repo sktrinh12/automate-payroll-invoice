@@ -7,7 +7,7 @@ from sheet_email_manager import draft_email
 if __name__ == "__main__":
     load_env_file(".env")
 
-    day, month, year, boolean_email = parse_arguments()
+    day, month, year, boolean_email, boolean_sqlite3 = parse_arguments()
 
     if day <= 15:
         from_date = f"{year}-{month:02d}-01"
@@ -24,7 +24,8 @@ if __name__ == "__main__":
     request_url, timelogs = fetch_timelogs(from_date, to_date)
 
     # Upload timelogs to SQLite
-    upload_to_sqlite(timelogs, request_url)
+    if boolean_sqlite3:
+        upload_to_sqlite(timelogs, request_url)
 
     # Draft an email
     if boolean_email:
