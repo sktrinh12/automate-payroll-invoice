@@ -8,7 +8,6 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from helper import pprint, count_invoices, datetime
-from sqlite import extract_data_from_db
 import os.path
 import base64
 
@@ -124,7 +123,7 @@ def create_gmail_draft(service_gmail, from_date, to_date, file_path):
     pprint(f"Draft email created ({subject}) with ID: {draft['id']}")
 
 
-def draft_email(from_date, to_date):
+def draft_email(from_date, to_date, total_hours):
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -146,9 +145,6 @@ def draft_email(from_date, to_date):
         service_sheets = build("sheets", "v4", credentials=creds)
         service_drive = build("drive", "v3", credentials=creds)
         service_gmail = build("gmail", "v1", credentials=creds)
-        # need to pass the argparse string as 3 separate arguments 
-        # the day either falls within 1-15 or 16-28+
-        total_hours = extract_data_from_db(from_date, to_date)
         update_sheet(service_sheets, from_date, to_date, total_hours)
         request = service_drive.files().export_media(
             fileId=os.getenv("SPREADSHEET_ID"),
