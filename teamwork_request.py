@@ -13,7 +13,7 @@ def fetch_timelogs(start_date, end_date):
 
     credentials = f"{api_key}:{pwd}"
     encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
-    fields = "id,dateCreated,minutes,description"
+    fields = "id,timeLogged,minutes,description"
     params = {"startDate": start_date, "endDate": end_date, "fields[timelogs]": fields}
     url = f"https://{site_name}.teamwork.com/projects/api/v3/projects/{project_id}/time.json"
     headers = {
