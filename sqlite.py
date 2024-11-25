@@ -1,5 +1,6 @@
 import sqlite3
-from helper import pprint, os.path
+import os.path
+from helper import pprint
 
 
 def upload_to_sqlite(timelogs, request_url):
@@ -22,11 +23,11 @@ def upload_to_sqlite(timelogs, request_url):
     last_data = len(timelogs)
     for i, timelog in enumerate(timelogs):
         if i == 0:
-            from_date = timelog["dateCreated"]
+            from_date = timelog["timeLogged"]
         if i == last_data-1:
-            to_date = timelog["dateCreated"]
+            to_date = timelog["timeLogged"]
         record_id = timelog["id"]
-        date_time = timelog["dateCreated"]
+        date_time = timelog["timeLogged"]
         decimal_hours = round(timelog["minutes"] / 60, 2)
         try:
             cursor.execute(
