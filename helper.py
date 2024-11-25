@@ -22,6 +22,8 @@ def parse_arguments():
     parser.add_argument('-d', '--date', type=str, required=True, help='Required date string (e.g., 15-10-2024 or 10-15-2024)')
     # optional argument to skip drafting of email
     parser.add_argument('-e', '--email', action='store_false', help='Optional flag to trigger drafting an email')
+    # optional argument to skip uploading to sqlite3 db
+    parser.add_argument('-a', '--add_sqlite3', action='store_false', help='Optional flag to trigger upload to sqlite3 db')
     args = parser.parse_args()
 
     try:
@@ -32,7 +34,7 @@ def parse_arguments():
         except ValueError:
             parser.error("Date must be in the format DD-MM-YYYY or MM-DD-YYYY.")
 
-    return parsed_date.day, parsed_date.month, parsed_date.year, args.trigger
+    return parsed_date.day, parsed_date.month, parsed_date.year, args.email, args.add_sqlite3
 
 
 def load_env_file(env_file_path):
