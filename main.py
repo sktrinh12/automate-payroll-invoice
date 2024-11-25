@@ -2,7 +2,7 @@ from helper import datetime, parse_arguments, pprint, load_env_file
 from teamwork_request import fetch_timelogs
 from sqlite import upload_to_sqlite
 from sheet_email_manager import draft_email
-
+from sqlite import extract_data_from_db
 
 if __name__ == "__main__":
     load_env_file(".env")
@@ -27,6 +27,8 @@ if __name__ == "__main__":
     if boolean_sqlite3:
         upload_to_sqlite(timelogs, request_url)
 
+    total_hours = extract_data_from_db(from_date, to_date)
+
     # Draft an email
     if boolean_email:
-        draft_email(from_date, to_date)
+        draft_email(from_date, to_date, total_hours)
