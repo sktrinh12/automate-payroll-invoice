@@ -7,7 +7,9 @@ import argparse
 from datetime import datetime, date
 from helper import load_env_file
 
-load_env_file(".env")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_file_path = os.path.join(script_dir, ".env")
+load_env_file(env_file_path)
 
 api_key = os.getenv("API_KEY")
 password = os.getenv("PASS")
