@@ -37,7 +37,7 @@ def parse_arguments():
     return parsed_date.day, parsed_date.month, parsed_date.year, args.email, args.add_sqlite3
 
 
-def load_env_file(env_file_path):
+def load_env_file(env_file_path, pprint=pprint):
     """Load key-value pairs from a .env file into environment variables."""
     try:
         with open(env_file_path, 'r') as file:
