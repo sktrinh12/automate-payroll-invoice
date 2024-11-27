@@ -4,15 +4,21 @@ import json
 import os
 import pytz
 import argparse
+import sys
 from datetime import datetime, date
 from helper import load_env_file
 
+def debug(msg):
+    print(msg, file=sys.stderr)
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 env_file_path = os.path.join(script_dir, ".env")
-load_env_file(env_file_path)
+load_env_file(env_file_path, debug)
 
 api_key = os.getenv("API_KEY")
 password = os.getenv("PASS")
+
+debug(env_file_path)
 
 credentials = f"{api_key}:{password}"
 encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
@@ -38,6 +44,17 @@ def valid_time(time_string):
             f"Invalid time format: '{time_string}'. Expected format: HH:MM"
         )
 
+def validate_hours(value):
+    try:
+        value = float(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"Invalid value: '{value}', it must be a number.")
+    if value.is_integer() or value % 0.25 == 0:
+        return value
+    else:
+        raise argparse.ArgumentTypeError(f"Invalid value: '{value}', it must be a whole number or multiple of 0.25.")
+
+
 def convert_to_utc(est_time):
     est = pytz.timezone('US/Eastern')
     today = datetime.today().date()
@@ -61,7 +78,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--description', type=str, default='', help='Optional description for the task')
     parser.add_argument('-s', '--start-time', type=valid_time, required=True, help='Start time in HH:MM format')
     parser.add_argument('-m', '--minutes', type=int, help='Time in minutes elapsed for task')
-    parser.add_argument('-hr', '--hours', type=int, help='Time in hours elapsed for task (will be converted to minutes)')
+    parser.add_argument('-hr', '--hours', type=validate_hours, help='Time in hours elapsed for task (will be converted to minutes)')
 
     args = parser.parse_args()
 
@@ -82,7 +99,7 @@ if __name__ == "__main__":
             "isUtc": True,
             "description": args.description,
             "isBillable": True,
-            "minutes": args.minutes,
+            "minutes": int(args.minutes),
             "projectId": int(os.getenv('PROJECT_ID')),
             "taskId": int(task_id),
             "userId": int(os.getenv("USER_ID")),
@@ -92,10 +109,10 @@ if __name__ == "__main__":
         }
     }
 
-    # pprint(json.dumps(payload))
+    # print(json.dumps(payload))
     response = requests.post(url, headers=headers, data=json.dumps(payload))
     if response.status_code == 201:
         print(response.text)
     else:
-        print(f'>>>ERROR {response.status_code}')
+        debug(f'>>>ERROR {response.status_code}')
         print(response.text)
