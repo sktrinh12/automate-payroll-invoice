@@ -82,7 +82,7 @@ def create_gmail_draft(service_gmail, from_date, to_date, file_path):
     <br>
     <p>
         Please see attached current invoice number <b>{INVOICE_COUNT:03}</b> for
-        <b>{from_date}</b> to <b>{to_date}</b> in <span style="font-family: monospace; background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; border: 1px solid #ddd;">.xlsx</span> file format.
+        <b>{from_date}</b> to <b>{to_date}</b> in <span style="font-family: monospace; background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; border: 1px solid #ddd;">.xlsx</span> file format. Also attached is the RCH exported timesheet.
     </p>
     <br>
     <br>
