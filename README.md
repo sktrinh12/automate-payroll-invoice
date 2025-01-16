@@ -28,3 +28,17 @@
 - python loops through payload and uploads to the sqlite3 database, `DB_NAME` which is part of the `.env` content.
 - Use of Google Sheets API to update several cells in a specific sheet
 - Download the sheet locally and also attach it to a draft email using Google Gmail API 
+
+#### sqlite3 code snippets:
+```sql
+SELECT SUM(decimal_hours) AS total
+FROM rch_timesheet
+WHERE DATE(strftime('%Y-%m-%d', date_time)) BETWEEN DATE('2024-12-15') AND DATE('2024-12-31');
+
+SELECT 77.0*65;
+ ```
+
+#### tlog command:
+```bash
+tlog -t ${TASK_NAME} -d ${DESCRIPTION} -s ${START_TIME} -hr ${HOUR} -m ${MINUTES}
+```
