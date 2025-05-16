@@ -10,6 +10,7 @@ from email import encoders
 from helper import pprint, count_invoices, datetime
 import os.path
 import base64
+import time
 
 
 SCOPES = [
@@ -21,6 +22,18 @@ SCOPES = [
 INVOICE_COUNT = 0
 OUTPUT_FILE = ""
 
+def safe_execute(request, retries=3, delay=2):
+    for i in range(retries):
+        try:
+            return request.execute()
+        except HttpError as e:
+            print(f"[HTTP ERROR] Attempt {i+1} failed: {e}")
+            time.sleep(delay)
+        except Exception as e:
+            print(f"[GENERIC ERROR] Attempt {i+1} failed: {e}")
+            time.sleep(delay)
+    raise RuntimeError("All retries failed for Google Sheets API call.")
+
 
 def update_sheet(service, from_date, to_date, total_hours):
     global INVOICE_COUNT
@@ -30,47 +43,28 @@ def update_sheet(service, from_date, to_date, total_hours):
     b22_value = f"{from_date} to {to_date} paid hours worked for {os.getenv('SENDER_COMPANY')}"
     INVOICE_COUNT = count_invoices(os.getenv("BASE_DIR"))
     g3_value = f"{INVOICE_COUNT:03}"
-    # need to reformat date because the excel export is Y-m-d
-    # file naming in project directory is m-d-Y
+
     date_obj = datetime.strptime(to_date, "%Y-%m-%d")
     reformatted_date = date_obj.strftime("%m_%d_%Y")
     OUTPUT_FILE = f"{os.getenv('PREFIX')}_{reformatted_date}_{INVOICE_COUNT:03}.xlsx"
-    range_g3 = "Invoice template!G3"
 
-    # Update G3 Invoice number
-    service.spreadsheets().values().update(
-        spreadsheetId=os.getenv('SPREADSHEET_ID'),
-        range=range_g3,
-        valueInputOption="RAW",
-        body={"values": [[g3_value]]},
-    ).execute()
+    updates = [
+        ("Invoice template!G3", [[g3_value]], "Updating G3 with invoice number"),
+        ("Invoice template!G6", [[f"Sent date: {todays_date}"]], "Updating G6 with today's date"),
+        ("Invoice template!B22", [[b22_value]], "Updating B22 with invoice text"),
+        ("Invoice template!E22", [[total_hours]], "Updating E22 with total hours")
+    ]
 
-    # Update G6 Date
-    range_g6 = "Invoice template!G6"
-    service.spreadsheets().values().update(
-        spreadsheetId=os.getenv('SPREADSHEET_ID'),
-        range=range_g6,
-        valueInputOption="RAW",
-        body={"values": [[f"Sent date: {todays_date}"]]},
-    ).execute()
-
-    # Update B22 text box
-    range_b22 = "Invoice template!B22"
-    service.spreadsheets().values().update(
-        spreadsheetId=os.getenv('SPREADSHEET_ID'),
-        range=range_b22,
-        valueInputOption="RAW",
-        body={"values": [[b22_value]]},
-    ).execute()
-
-    # Update E22 time hours
-    range_e22 = "Invoice template!E22"
-    service.spreadsheets().values().update(
-        spreadsheetId=os.getenv('SPREADSHEET_ID'),
-        range=range_e22,
-        valueInputOption="RAW",
-        body={"values": [[total_hours]]},
-    ).execute()
+    for range_str, values, description in updates:
+        print(f"→ {description} ({range_str})")
+        request = service.spreadsheets().values().update(
+            spreadsheetId=os.getenv('SPREADSHEET_ID'),
+            range=range_str,
+            valueInputOption="RAW",
+            body={"values": values},
+        )
+        safe_execute(request)
+        print(f"✓ Success: {range_str}")
 
 
 def create_gmail_draft(service_gmail, from_date, to_date, file_path):
@@ -145,6 +139,9 @@ def draft_email(from_date, to_date, total_hours):
         service_sheets = build("sheets", "v4", credentials=creds)
         service_drive = build("drive", "v3", credentials=creds)
         service_gmail = build("gmail", "v1", credentials=creds)
+
+        print("About to update the Google Sheet...")
+
         update_sheet(service_sheets, from_date, to_date, total_hours)
         request = service_drive.files().export_media(
             fileId=os.getenv("SPREADSHEET_ID"),
