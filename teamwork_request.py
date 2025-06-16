@@ -13,7 +13,7 @@ def fetch_timelogs(start_date, end_date):
 
     credentials = f"{api_key}:{pwd}"
     encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
-    fields = "id,timeLogged,minutes,description"
+    fields = "id,timeLogged,minutes,description,isBillable"
     params = {"startDate": start_date, "endDate": end_date, "fields[timelogs]": fields}
     url = f"https://{site_name}.teamwork.com/projects/api/v3/projects/{project_id}/time.json"
     headers = {
@@ -24,4 +24,6 @@ def fetch_timelogs(start_date, end_date):
     response.raise_for_status()  # Raise an error for bad responses
 
     data = response.json()
-    return response.request.url, data["timelogs"]
+    filtered_timelogs = [log for log in data["timelogs"] if log.get("isBillable") is True]
+
+    return response.request.url, filtered_timelogs
