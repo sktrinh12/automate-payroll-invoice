@@ -21,7 +21,7 @@ def parse_arguments():
     # required date argument
     parser.add_argument('-d', '--date', type=str, required=True, help='Required date string (e.g., 15-10-2024 or 10-15-2024)')
     parser.add_argument('-e', '--email', action='store_false', help='Optional argument to skip drafting of email')
-    parser.add_argument('-a', '--add_sqlite3', action='store_false', help='Optional argument to skip uploading to sqlite3 db')
+    parser.add_argument('-a', '--add_sqlite3', action='store_false', help='Optional argument to skip uploading to sqlite3 db and querying of teamwork api')
     args = parser.parse_args()
 
     try:

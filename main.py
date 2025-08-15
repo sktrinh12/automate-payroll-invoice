@@ -20,11 +20,10 @@ if __name__ == "__main__":
 
     pprint(f"From date: {from_date}, To date: {to_date}")
 
-    # Fetch timelogs from the API
-    request_url, timelogs = fetch_timelogs(from_date, to_date)
 
-    # Upload timelogs to SQLite
+    # Upload timelogs to SQLite & fetch timelogs from the API
     if boolean_sqlite3:
+        request_url, timelogs = fetch_timelogs(from_date, to_date)
         upload_to_sqlite(timelogs, request_url)
 
     total_hours = extract_data_from_db(from_date, to_date)
