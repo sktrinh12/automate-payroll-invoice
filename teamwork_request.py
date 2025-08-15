@@ -25,5 +25,8 @@ def fetch_timelogs(start_date, end_date):
 
     data = response.json()
     filtered_timelogs = [log for log in data["timelogs"] if log.get("isBillable") is True]
+    print()
+    print(filtered_timelogs)
+    print()
 
     return response.request.url, filtered_timelogs
