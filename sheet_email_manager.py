@@ -155,6 +155,7 @@ def draft_email(from_date, to_date, total_hours):
         full_file_path = (
             f"{os.getenv('BASE_DIR')}/{YEAR}/{MONTH_NUM}_{MONTH}/{OUTPUT_FILE}"
         )
+        os.makedirs(os.path.dirname(full_file_path), exist_ok=True)
 
         with open(full_file_path, "wb") as f:
             f.write(request.execute())
