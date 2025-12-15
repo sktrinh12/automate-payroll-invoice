@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from helper import pprint, count_invoices, datetime
-import os.path
+import os
 import base64
 import time
 
