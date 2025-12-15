@@ -8,12 +8,14 @@ def fetch_timelogs(start_date, end_date):
     pwd = os.getenv("PASS")
     site_name = os.getenv("SITE_NAME")
     project_id = os.getenv("PROJECT_ID")
+    user_id = int(os.getenv("USER_ID"))
+    # print(f'user id: {user_id}')
     if not api_key or not site_name or not project_id or not pwd:
         raise ValueError("Missing required environment variables.")
 
     credentials = f"{api_key}:{pwd}"
     encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
-    fields = "id,timeLogged,minutes,description,isBillable"
+    fields = "id,timeLogged,minutes,description,isBillable,loggedByUserId"
     params = {"startDate": start_date, "endDate": end_date, "fields[timelogs]": fields}
     url = f"https://{site_name}.teamwork.com/projects/api/v3/projects/{project_id}/time.json"
     headers = {
@@ -24,7 +26,11 @@ def fetch_timelogs(start_date, end_date):
     response.raise_for_status()  # Raise an error for bad responses
 
     data = response.json()
-    filtered_timelogs = [log for log in data["timelogs"] if log.get("isBillable") is True]
+    filtered_timelogs = [
+        log for log in data["timelogs"]
+        if log.get("isBillable") is True
+           and log.get("loggedByUserId") == user_id
+    ]
     print()
     print(filtered_timelogs)
     print()
